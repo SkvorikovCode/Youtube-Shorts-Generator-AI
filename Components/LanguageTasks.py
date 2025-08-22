@@ -65,27 +65,16 @@ def GetHighlight(Transcription):
     print("Getting Highlight from Transcription ")
     try:
         # Создаем клиент с максимальной изоляцией
-        client = Client(
-            proxies={},  # Пустые прокси
-            timeout=30,
-            headers={
-                'User-Agent': 'AI-Youtube-Shorts-Generator/1.0',
-                'Accept': 'application/json',
-                'Connection': 'close'
-            }
-        )
+        client = Client()
         
         # Используем локальную модель без веб-поиска
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": system},
-                {"role": "user", "content": Transcription + system},
+                {"role": "user", "content": Transcription},
             ],
-            web_search=False,
-            stream=False,
-            temperature=0.7,
-            max_tokens=500
+            stream=False
         )
 
         json_string = response.choices[0].message.content

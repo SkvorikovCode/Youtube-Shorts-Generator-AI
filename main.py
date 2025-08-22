@@ -31,9 +31,25 @@ if Vid:
                 TransText += (f"{start} - {end}: {text}")
 
             start_time = time.time()
-            start , stop = GetHighlight(TransText)
+            highlight_result = GetHighlight(TransText)
             end_time = time.time()
             print(f"GetHighlight took {end_time - start_time:.2f} seconds")
+
+            # Обработка результата GetHighlight
+            start = 0
+            stop = 0
+            if highlight_result and isinstance(highlight_result, list) and len(highlight_result) > 0:
+                # Если возвращается список с данными
+                first_highlight = highlight_result[0]
+                start = int(float(first_highlight.get('start', 0)))
+                stop = int(float(first_highlight.get('end', 0)))
+            elif highlight_result and isinstance(highlight_result, dict):
+                # Если возвращается словарь с highlights
+                highlights = highlight_result.get('highlights', [])
+                if highlights and len(highlights) > 0:
+                    first_highlight = highlights[0]
+                    start = first_highlight.get('start_time', 0)
+                    stop = first_highlight.get('end_time', 0)
 
             if start != 0 and stop != 0:
                 print(f"Start: {start} , End: {stop}")
