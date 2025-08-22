@@ -1,0 +1,14 @@
+faster_whisper
+ffmpeg
+ffmpeg_python
+moviepy
+numpy
+opencv_python
+opencv_python_headless
+python-dotenv
+pytubefix
+torch
+webrtcvad-wheels
+pydub
+g4f
+--extra-index-url https://download.pytorch.org/whl/cu121
