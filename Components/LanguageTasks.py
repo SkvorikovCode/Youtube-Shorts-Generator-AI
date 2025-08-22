@@ -1,5 +1,22 @@
 from g4f.client import Client
 import json
+import os
+import warnings
+
+# Подавляем предупреждения и блокируем веб-запросы
+warnings.filterwarnings("ignore")
+os.environ['PYTHONHTTPSVERIFY'] = '0'
+os.environ['REQUESTS_CA_BUNDLE'] = ''
+os.environ['SSL_VERIFY'] = 'False'
+os.environ['NO_PROXY'] = '*'
+os.environ['DISABLE_WEB_BROWSER'] = '1'
+
+# Блокируем открытие браузера
+try:
+    import webbrowser
+    webbrowser.open = lambda *args, **kwargs: None
+except ImportError:
+    pass
 
 
 # Function to extract start and end times
@@ -47,14 +64,28 @@ Any Example
 def GetHighlight(Transcription):
     print("Getting Highlight from Transcription ")
     try:
-        client = Client()
+        # Создаем клиент с максимальной изоляцией
+        client = Client(
+            proxies={},  # Пустые прокси
+            timeout=30,
+            headers={
+                'User-Agent': 'AI-Youtube-Shorts-Generator/1.0',
+                'Accept': 'application/json',
+                'Connection': 'close'
+            }
+        )
+        
+        # Используем локальную модель без веб-поиска
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": Transcription + system},
             ],
-            web_search=False
+            web_search=False,
+            stream=False,
+            temperature=0.7,
+            max_tokens=500
         )
 
         json_string = response.choices[0].message.content
