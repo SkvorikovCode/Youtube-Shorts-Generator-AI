@@ -19,16 +19,36 @@ def download_youtube_video(url):
             stream_type = "Progressive" if stream.is_progressive else "Adaptive"
             print(f"{i}. Resolution: {stream.resolution}, Size: {size:.2f} MB, Type: {stream_type}")
 
-        choice = int(input("Enter the number of the video stream to download: "))
-        selected_stream = video_streams[choice]
+        # Автоматически выбираем 720p качество для оптимальной производительности
+        selected_stream = None
+        for stream in video_streams:
+            if stream.resolution == '720p':
+                selected_stream = stream
+                print(f"Автоматически выбрано: {stream.resolution}, Size: {get_video_size(stream):.2f} MB")
+                break
+        
+        # Если 720p не найдено, выбираем первый доступный поток
+        if selected_stream is None:
+            if video_streams:
+                selected_stream = video_streams[0]
+                print(f"720p не найдено, выбрано: {selected_stream.resolution}, Size: {get_video_size(selected_stream):.2f} MB")
+            else:
+                print("Нет доступных видео потоков")
+                return None
 
         if not os.path.exists('videos'):
             os.makedirs('videos')
 
+        if selected_stream is None:
+            return None
+            
         print(f"Downloading video: {yt.title}")
         video_file = selected_stream.download(output_path='videos', filename_prefix="video_")
 
         if not selected_stream.is_progressive:
+            if audio_stream is None:
+                print("Аудио поток не найден")
+                return None
             print("Downloading audio...")
             audio_file = audio_stream.download(output_path='videos', filename_prefix="audio_")
 
@@ -39,8 +59,10 @@ def download_youtube_video(url):
             stream = ffmpeg.output(stream, audio, output_file, vcodec='libx264', acodec='aac', strict='experimental')
             ffmpeg.run(stream, overwrite_output=True)
 
-            os.remove(video_file)
-            os.remove(audio_file)
+            if video_file:
+                os.remove(video_file)
+            if audio_file:
+                os.remove(audio_file)
         else:
             output_file = video_file
 
