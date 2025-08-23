@@ -5,11 +5,7 @@ def extractAudio(video_path):
     try:
         video_clip = VideoFileClip(video_path)
         audio_path = "audio.wav"
-        if video_clip.audio is not None:
-            video_clip.audio.write_audiofile(audio_path)
-        else:
-            print("Warning: Video has no audio track")
-            return None
+        video_clip.audio.write_audiofile(audio_path)
         video_clip.close()
         print(f"Extracted audio to: {audio_path}")
         return audio_path

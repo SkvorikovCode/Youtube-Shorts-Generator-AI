@@ -34,6 +34,8 @@ if Vid:
             highlight_result = GetHighlight(TransText)
             end_time = time.time()
             print(f"GetHighlight took {end_time - start_time:.2f} seconds")
+            print(f"GetHighlight result: {highlight_result}")
+            print(f"GetHighlight result type: {type(highlight_result)}")
 
             # Обработка результата GetHighlight
             start = 0
@@ -41,6 +43,7 @@ if Vid:
             if highlight_result and isinstance(highlight_result, list) and len(highlight_result) > 0:
                 # Если возвращается список с данными
                 first_highlight = highlight_result[0]
+                print(f"First highlight: {first_highlight}")
                 start = int(float(first_highlight.get('start', 0)))
                 stop = int(float(first_highlight.get('end', 0)))
             elif highlight_result and isinstance(highlight_result, dict):
